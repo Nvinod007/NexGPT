@@ -1,0 +1,1 @@
+export const gitHubProfilePhotoURL = "https://avatars.githubusercontent.com/u/104321245?v=4"; 

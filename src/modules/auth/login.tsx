@@ -2,14 +2,27 @@
 import { useState, useRef} from "react";
 import Header from "../header";
 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+
+import { useNavigate } from "react-router-dom";
 import { checkValidData } from "../shared/utils/validate";
+import { auth } from "./firebase";
+import { BROWSE_PATH } from "../routes/paths";
+import { gitHubProfilePhotoURL } from "../shared/utils/links";
+import { useDispatch } from "react-redux";
+import { addUser } from "../redux/userSlice";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string|null>(null);
+    const navigate = useNavigate();
+    const dispatch  = useDispatch();
 
-
-    const name = useRef(null);
+    const name = useRef<HTMLInputElement>(null);
     const email = useRef<HTMLInputElement>(null);
     const password = useRef<HTMLInputElement>(null);
 
@@ -18,13 +31,7 @@ const Login = () => {
   };
 
   const handleButtonClick = () => {
-    console.log(
-      "email?.current?.value",
-      email,
-      email?.current?.value,
-    );
     if (!email?.current?.value?.trim() || !password?.current?.value?.trim()) {
-      console.log("in if");
       setErrorMessage("Enter email and password");
       return;
     }
@@ -35,19 +42,73 @@ const Login = () => {
     setErrorMessage(message);
     if (message) return;
 
+    if (!isSignInForm) {
+      // Sign Up Logic
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName: name.current?.value,
+            photoURL: gitHubProfilePhotoURL,
+          })
+            .then((user) => {
+              const email = auth.currentUser?.email ?? "";
+              const uid = auth.currentUser?.uid ?? "";
+              const displayName = auth.currentUser?.displayName ?? "";
+              dispatch(
+                addUser({
+                  uid,
+                  email,
+                  displayName,
+                  photoURL: gitHubProfilePhotoURL,
+                })
+              );
+
+              navigate(BROWSE_PATH);
+            })
+            .catch((error) => {
+              setErrorMessage(error.message);
+            });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+        });
+    } else {
+      // Sign In Logic
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          navigate(BROWSE_PATH);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+        });
+    }
   };
   return (
     <div>
       <Header />
       <div className="absolute">
         <img
-          className="w-screen h-screen"
+          className="w-screen h-screen  overflow-hidden"
           src="https://assets.nflxext.com/ffe/siteui/vlv3/fc164b4b-f085-44ee-bb7f-ec7df8539eff/d23a1608-7d90-4da1-93d6-bae2fe60a69b/IN-en-20230814-popsignuptwoweeks-perspective_alpha_website_large.jpg"
           alt="logo"
         />
         <form
           onSubmit={(e) => e.preventDefault()}
-          className="flex flex-col w-full md:w-4/6 lg:w-5/12 top-0 absolute p-12 bg-black my-36 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-80"
+          className="flex flex-col h-full sm:h-fit w-full sm:w-4/6 lg:w-5/12 top-0 absolute p-12 bg-black my-36 mx-auto right-0 left-0 text-white rounded-lg bg-opacity-80"
         >
           <h1 className="font-bold text-3xl py-4">
             {isSignInForm ? "Sign In" : "Sign Up"}
