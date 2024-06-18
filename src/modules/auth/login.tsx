@@ -1,5 +1,4 @@
-
-import { useState, useRef} from "react";
+import { useState, useRef } from "react";
 import Header from "../header";
 
 import {
@@ -8,23 +7,20 @@ import {
   updateProfile,
 } from "firebase/auth";
 
-import { useNavigate } from "react-router-dom";
 import { checkValidData } from "../shared/utils/validate";
 import { auth } from "./firebase";
-import { BROWSE_PATH } from "../routes/paths";
 import { gitHubProfilePhotoURL } from "../shared/utils/links";
 import { useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
-    const [errorMessage, setErrorMessage] = useState<string|null>(null);
-    const navigate = useNavigate();
-    const dispatch  = useDispatch();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const dispatch = useDispatch();
 
-    const name = useRef<HTMLInputElement>(null);
-    const email = useRef<HTMLInputElement>(null);
-    const password = useRef<HTMLInputElement>(null);
+  const name = useRef<HTMLInputElement>(null);
+  const email = useRef<HTMLInputElement>(null);
+  const password = useRef<HTMLInputElement>(null);
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
@@ -67,8 +63,6 @@ const Login = () => {
                   photoURL: gitHubProfilePhotoURL,
                 })
               );
-
-              navigate(BROWSE_PATH);
             })
             .catch((error) => {
               setErrorMessage(error.message);
@@ -88,7 +82,6 @@ const Login = () => {
       )
         .then((userCredential) => {
           // Signed in
-          navigate(BROWSE_PATH);
         })
         .catch((error) => {
           const errorCode = error.code;
