@@ -5,7 +5,7 @@ import { auth } from "../auth/firebase";
 import { addUser, removeUser, userState } from "../redux/userSlice";
 import { BROWSE_PATH, LOGIN_PATH } from "../routes/paths";
 import { useEffect } from "react";
-import { gitHubProfilePhotoURL } from "../shared/utils/links";
+import { LOGO_URL, gitHubProfilePhotoURL } from "../shared/utils/constants";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const Header = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const { uid, email, displayName } = user;
         dispatch(
@@ -33,16 +33,14 @@ const Header = () => {
         navigate(LOGIN_PATH);
       }
     });
+    // unsubscribe when component unmounts;
+    return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="absolute px-8 py-2 bg-gradient-to-b from-black z-10 w-full flex justify-between">
-      <img
-        className="w-44  bg-greed-400"
-        src="https://cdn.cookielaw.org/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"
-        alt="logo"
-      />
+      <img className="w-44  bg-greed-400" src={LOGO_URL} alt="logo" />
       {user.uid && (
         <div className="flex p-2 items-center gap-2">
           <img

@@ -1,7 +1,9 @@
-import React from "react";
 import Header from "../header";
+import { useNowPlayingMovies } from "../shared/hooks/useNowPlayingMovies";
 
 const Browse = () => {
+  useNowPlayingMovies();
+
   return (
     <div>
       <Header />

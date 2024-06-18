@@ -9,7 +9,7 @@ import {
 
 import { checkValidData } from "../shared/utils/validate";
 import { auth } from "./firebase";
-import { gitHubProfilePhotoURL } from "../shared/utils/links";
+import { gitHubProfilePhotoURL } from "../shared/utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice";
 
