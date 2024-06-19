@@ -9,7 +9,7 @@ import {
 
 import { checkValidData } from "../shared/utils/validate";
 import { auth } from "./firebase";
-import { gitHubProfilePhotoURL } from "../shared/utils/constants";
+import { GITHUB_PROFILE_PHOTO_URL } from "../shared/utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice";
 
@@ -49,7 +49,7 @@ const Login = () => {
           const user = userCredential.user;
           updateProfile(user, {
             displayName: name.current?.value,
-            photoURL: gitHubProfilePhotoURL,
+            photoURL: GITHUB_PROFILE_PHOTO_URL,
           })
             .then((user) => {
               const email = auth.currentUser?.email ?? "";
@@ -60,7 +60,7 @@ const Login = () => {
                   uid,
                   email,
                   displayName,
-                  photoURL: gitHubProfilePhotoURL,
+                  photoURL: GITHUB_PROFILE_PHOTO_URL,
                 })
               );
             })

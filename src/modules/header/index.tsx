@@ -5,7 +5,7 @@ import { auth } from "../auth/firebase";
 import { addUser, removeUser, userState } from "../redux/userSlice";
 import { BROWSE_PATH, LOGIN_PATH } from "../routes/paths";
 import { useEffect } from "react";
-import { LOGO_URL, gitHubProfilePhotoURL } from "../shared/utils/constants";
+import { LOGO_URL, GITHUB_PROFILE_PHOTO_URL } from "../shared/utils/constants";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Header = () => {
             uid,
             email,
             displayName,
-            photoURL: gitHubProfilePhotoURL,
+            photoURL: GITHUB_PROFILE_PHOTO_URL,
           })
         );
         navigate(BROWSE_PATH);
